@@ -11,11 +11,14 @@ Find all possible words with those letters
 
 '''
 #display an image
-
-pathUnForm = 'C:/Users/colin/wordMochaRepo/wordMochaSolver/alphabet/'
-pathForm = 'C:/Users/colin/wordMochaRepo/wordMochaSolver/alphabetFormat/'
-pathScreeshot = 'C:/Users/colin/wordMochaRepo/wordMochaSolver/screenshots/'
-
+'''
+pathUnForm = 'C:/Users/colin/coding/wordMochaSolver/alphabet/'
+pathForm = 'C:/Users/colin/coding/wordMochaSolver/alphabetFormat/'
+pathScreenshot = 'C:/Users/colin/coding/wordMochaSolver/screenshots/'
+'''
+pathUnForm = str(os.getcwd()) + '/alphabet/'
+pathForm = str(os.getcwd()) + '/alphabetFormat/'
+pathScreenshot = str(os.getcwd()) + '/screenshots/'
 def display (title, img):
 	cv2.imshow(title, img)
 	cv2.waitKey(0)
@@ -63,7 +66,7 @@ def getLettersFromGame(imagePath,alphabetPath):
 
 def main():
     #formatAll('alphabet', pathForm)
-    display('bottomHalf', getLettersFromGame(pathScreeshot,pathForm))
+    display('bottomHalf', getLettersFromGame(pathScreenshot,pathForm))
 
 
 if __name__ == "__main__":
