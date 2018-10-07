@@ -156,6 +156,24 @@ def solveForSix(letters):
 		fives = []
 	
 	return final
+
+def solveForSeven(letters):
+	sixes = []
+	final = []
+	for letter in letters:
+		temp = list(letters)
+		temp.remove(letter)
+		sixes.append(solveForSix(temp))
+		for sixList in sixes:
+			for six in sixList:
+				tempSix = list(six)
+				final.append(tempSix)
+				five.append(letter)
+				final.append(six)
+		temp = []
+		sixes = []
+	
+	return final
 	
 def combos(letters,final):
 	letters = list(letters)
