@@ -1,6 +1,6 @@
 import os
 import cv2
-
+import numpy as np
 '''
 Colin Chen October 2018
 
@@ -50,7 +50,7 @@ def formatAll(path,pathDest):
 		saveImages(str(im), formatLetter(image),pathDest) #save image #name = str(im), 
 
 #get the letters from a screenshot
-def getLettersFromGame(imagePath,alphabetPath):
+def formatScreenshot(imagePath):
 	#image[startRow:endRow, startCol:endCol]
 	image = cv2.imread(imagePath + '/' + os.listdir(imagePath)[0], cv2.IMREAD_GRAYSCALE)
 	#display('cropTest', image[0:200, 0:100])
@@ -59,11 +59,36 @@ def getLettersFromGame(imagePath,alphabetPath):
 	bottomHalf = image[int(rows/2):rows,0:cols]
 	return formatLetter(bottomHalf)
 
+def matchLetters(gameScreenshotPath, alphabetPath):
+	final = []
+	screenshot = cv2.imread(gameScreenshotPath + '/' + os.listdir(gameScreenshotPath)[2], cv2.IMREAD_GRAYSCALE)
+	for letterName in os.listdir(alphabetPath):
+
+		print('Looking for', str(letterName)[0:1])
+
+		colorImage = cv2.imread(alphabetPath + '/' + str(letterName))
+		letterImage = cv2.imread(alphabetPath + '/' + str(letterName), cv2.IMREAD_GRAYSCALE)
+		rows,cols = letterImage.shape
+
+		res = cv2.matchTemplate(screenshot, letterImage, cv2.TM_CCOEFF_NORMED)
+		(_,maxVal,_,_) = cv2.minMaxLoc(res)
+		print (maxVal)
+		threshold = 0.65
+		if (maxVal >= threshold):
+			final.append(str(letterName)[0:1])
+	print ('expected', str(os.listdir(gameScreenshotPath)[2]))
+	print ('found', len(final), 'letters')
+	return final
+
+		
+
+
 
 
 def main():
     #formatAll('alphabet', pathForm)
-    display('bottomHalf', getLettersFromGame(pathScreeshot,pathForm))
+    #display('bottomHalf', formatScreenshot(pathScreeshot))
+    print (matchLetters(pathScreeshot,pathForm))
 
 
 if __name__ == "__main__":
