@@ -1,6 +1,6 @@
 import os
 import cv2
-
+import numpy as np
 '''
 Colin Chen October 2018
 
@@ -70,7 +70,7 @@ def formatAll(path,pathDest):
 		saveImages(str(im), formatLetter(image),pathDest) #save image #name = str(im), 
 
 #get the letters from a screenshot
-def getLettersFromGame(imagePath,alphabetPath):
+def formatScreenshot(imagePath):
 	#image[startRow:endRow, startCol:endCol]
 	image = cv2.imread(imagePath + '/' + os.listdir(imagePath)[0], cv2.IMREAD_GRAYSCALE)
 	#display('cropTest', image[0:200, 0:100])
@@ -99,6 +99,16 @@ def matchLetters(gameScreenshotPath, alphabetPath):
 	print ('expected', str(os.listdir(gameScreenshotPath)[2]))
 	print ('found', len(final), 'letters')
 	return final
+
+		
+
+
+
+		
+def main():
+    #formatAll('alphabet', pathForm)
+    #display('bottomHalf', formatScreenshot(pathScreeshot))
+    print (matchLetters(pathScreeshot,pathForm))
 
 		
 
