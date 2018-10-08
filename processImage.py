@@ -34,6 +34,23 @@ def formatLetter(img):
 	ret, letter = cv2.threshold(blur, 150, 255, cv2.THRESH_BINARY)
 	return letter
 
+def formatSeveral(img):
+	threshToTry = [100,110,120,130,140,150,160,170,180,190,200]
+
+	processedImages = {}
+	blur = cv2.GaussianBlur(img, (5,5), 0)
+	for threshold in threshToTry:
+		ret, letter = cv2.threshold(blur, threshold, 255, cv2.THRESH_BINARY)
+		display(str(threshold), letter)
+		#print (letter)
+
+		processedImages[threshold] = letter
+	return processedImages
+def formatScreen(img):
+
+	blur = cv2.GaussianBlur(img,(5,5),0)
+	ret, letter = cv2.threshold(blur, 100, 255, cv2.THRESH_BINARY)
+	return letter
 #save a single image
 def saveImages(imageName,image,pathDest):
 	try:
@@ -62,12 +79,35 @@ def getLettersFromGame(imagePath,alphabetPath):
 	bottomHalf = image[int(rows/2):rows,0:cols]
 	return formatLetter(bottomHalf)
 
+def matchLetters(gameScreenshotPath, alphabetPath):
+	final = []
+	screenshot = cv2.imread(gameScreenshotPath + '/' + os.listdir(gameScreenshotPath)[2], cv2.IMREAD_GRAYSCALE)
+	for letterName in os.listdir(alphabetPath):
 
+		print('Looking for', str(letterName)[0:1])
+
+		colorImage = cv2.imread(alphabetPath + '/' + str(letterName))
+		letterImage = cv2.imread(alphabetPath + '/' + str(letterName), cv2.IMREAD_GRAYSCALE)
+		rows,cols = letterImage.shape
+
+		res = cv2.matchTemplate(screenshot, letterImage, cv2.TM_CCOEFF_NORMED)
+		(_,maxVal,_,_) = cv2.minMaxLoc(res)
+		print (maxVal)
+		threshold = 0.65
+		if (maxVal >= threshold):
+			final.append(str(letterName)[0:1])
+	print ('expected', str(os.listdir(gameScreenshotPath)[2]))
+	print ('found', len(final), 'letters')
+	return final
+
+		
 
 def main():
-    #formatAll('alphabet', pathForm)
-    display('bottomHalf', getLettersFromGame(pathScreenshot,pathForm))
-
+	#formatAll('alphabet', pathForm)
+	#display('bottomHalf', getLettersFromGame(pathScreenshot,pathForm))
+	images = formatSeveral(cv2.imread(pathScreenshot + '/' + os.listdir(pathScreenshot)[0],cv2.IMREAD_GRAYSCALE))
+	#display('test', cv2.imread(pathScreenshot + '/' + os.listdir(pathScreenshot)[0],cv2.IMREAD_GRAYSCALE))
+	print (images)
 
 if __name__ == "__main__":
 

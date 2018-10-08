@@ -4,6 +4,8 @@ spell = SpellChecker()
 def listener():
 	userIn = input('Letters: ')
 	while(userIn.lower() != 'done'):
+		if (len(userIn) == 7):
+			formatOutput(spell.known(twoDtoStrings(solveForSeven(userIn))))
 		if (len(userIn) == 6):
 			formatOutput(spell.known(twoDtoStrings(solveForSix(userIn))))
 		if (len(userIn) == 5):
@@ -12,6 +14,7 @@ def listener():
 			formatOutput(spell.known(twoDtoStrings(solveForFour(userIn))))
 		if (len(userIn) == 3):
 			formatOutput(spell.known(twoDtoStrings(solveForThree(userIn))))
+
 		userIn = input('Letters: ')
 
 
