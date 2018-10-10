@@ -31,8 +31,9 @@ def formatLetter(img):
 	
 	
 	blur = cv2.GaussianBlur(img,(5,5),0)
-	ret, letter = cv2.threshold(blur, 150, 255, cv2.THRESH_BINARY)
-	return letter
+	ret, letter = cv2.threshold(blur, 145, 255, cv2.THRESH_BINARY)
+	reblur = cv2.GaussianBlur(letter,(5,5),0)
+	return reblur
 
 def formatSeveral(img):
 	threshToTry = [100,110,120,130,140,150,160,170,180,190,200]
@@ -70,18 +71,19 @@ def formatAll(path,pathDest):
 		saveImages(str(im), formatLetter(image),pathDest) #save image #name = str(im), 
 
 #get the letters from a screenshot
-def formatScreenshot(imagePath):
+def formatScreenshot(imagePath,screenshotPos):
 	#image[startRow:endRow, startCol:endCol]
-	image = cv2.imread(imagePath + '/' + os.listdir(imagePath)[0], cv2.IMREAD_GRAYSCALE)
+	image = cv2.imread(imagePath + '/' + os.listdir(imagePath)[screenshotPos], cv2.IMREAD_GRAYSCALE)
 	#display('cropTest', image[0:200, 0:100])
 	rows,cols = image.shape
 	
 	bottomHalf = image[int(rows/2):rows,0:cols]
-	return formatLetter(bottomHalf)
+	return formatScreenshot(bottomHalf)
 
-def matchLetters(gameScreenshotPath, alphabetPath):
+def matchLetters(gameScreenshotPath,screenshotPos, alphabetPath):
 	final = []
-	screenshot = cv2.imread(gameScreenshotPath + '/' + os.listdir(gameScreenshotPath)[2], cv2.IMREAD_GRAYSCALE)
+	locations = []
+	screenshot = cv2.imread(gameScreenshotPath + '/' + os.listdir(gameScreenshotPath)[screenshotPos], cv2.IMREAD_GRAYSCALE)
 	for letterName in os.listdir(alphabetPath):
 
 		print('Looking for', str(letterName)[0:1])
@@ -91,33 +93,45 @@ def matchLetters(gameScreenshotPath, alphabetPath):
 		rows,cols = letterImage.shape
 
 		res = cv2.matchTemplate(screenshot, letterImage, cv2.TM_CCOEFF_NORMED)
-		(_,maxVal,_,_) = cv2.minMaxLoc(res)
+		(_,maxVal,_,maxLoc) = cv2.minMaxLoc(res)
+		
+
+
+		#if x +- 10 and y +- 10 aren't in locations
+		#add x and y to locations
+		for x in range(-10,10):
+			for y in range(-10,10):
+				if (tuple([x,y]) not in locations):
+					locations.append(maxLoc)
+					break
+				break
+			break
+		
 		print (maxVal)
-		threshold = 0.65
+		threshold = 0.9
 		if (maxVal >= threshold):
 			final.append(str(letterName)[0:1])
-	print ('expected', str(os.listdir(gameScreenshotPath)[2]))
+	print ('expected', str(os.listdir(gameScreenshotPath)[screenshotPos]))
+	print ('expecting', len(locations), 'letters')
 	print ('found', len(final), 'letters')
+	print (final)
 	return final
 
-		
+def getExpectedNum(gameScreenshotPath,screenshotPos):
+	screenshot = cv2.imread(gameScreenshotPath + '/' + os.listdir(gameScreenshotPath)[screenshotPos], cv2.IMREAD_GRAYSCALE)
 
 
 
 		
-def main():
-    #formatAll('alphabet', pathForm)
-    #display('bottomHalf', formatScreenshot(pathScreeshot))
-    print (matchLetters(pathScreeshot,pathForm))
-
-		
-
 def main():
 	#formatAll('alphabet', pathForm)
-	#display('bottomHalf', getLettersFromGame(pathScreenshot,pathForm))
-	images = formatSeveral(cv2.imread(pathScreenshot + '/' + os.listdir(pathScreenshot)[0],cv2.IMREAD_GRAYSCALE))
-	#display('test', cv2.imread(pathScreenshot + '/' + os.listdir(pathScreenshot)[0],cv2.IMREAD_GRAYSCALE))
-	print (images)
+	#display('bottomHalf', formatScreenshot(pathScreeshot))
+	#print (matchLetters(pathScreeshot,pathForm))
+	formatAll(pathUnForm, pathForm)
+	for screenshot in range(0,len(os.listdir(pathScreenshot))):
+   		print (matchLetters(pathScreenshot,screenshot,pathForm))
+	return 0		
+
 
 if __name__ == "__main__":
 
