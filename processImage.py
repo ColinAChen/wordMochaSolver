@@ -1,6 +1,7 @@
 import os
-import cv2
 import numpy as np
+import imutils
+import cv2
 '''
 Colin Chen October 2018
 
@@ -11,7 +12,8 @@ Find all possible words with those letters
 
 '''
 #display an image
-'''
+'''import cv2
+
 pathUnForm = 'C:/Users/colin/coding/wordMochaSolver/alphabet/'
 pathForm = 'C:/Users/colin/coding/wordMochaSolver/alphabetFormat/'
 pathScreenshot = 'C:/Users/colin/coding/wordMochaSolver/screenshots/'
@@ -33,6 +35,8 @@ def formatLetter(img):
 	blur = cv2.GaussianBlur(img,(5,5),0)
 	ret, letter = cv2.threshold(blur, 145, 255, cv2.THRESH_BINARY)
 	reblur = cv2.GaussianBlur(letter,(5,5),0)
+	template = cv2.Canny(reblur,50,200)
+	(tHeight,tWidth) = template.shape[:2]
 	return reblur
 
 def formatSeveral(img):
@@ -47,6 +51,7 @@ def formatSeveral(img):
 
 		processedImages[threshold] = letter
 	return processedImages
+
 def formatScreen(img):
 
 	blur = cv2.GaussianBlur(img,(5,5),0)
@@ -81,55 +86,61 @@ def formatScreenshot(imagePath,screenshotPos):
 	return formatScreenshot(bottomHalf)
 
 def matchLetters(gameScreenshotPath,screenshotPos, alphabetPath):
-	final = []
+	final = {}
 	locations = []
 	screenshot = cv2.imread(gameScreenshotPath + '/' + os.listdir(gameScreenshotPath)[screenshotPos], cv2.IMREAD_GRAYSCALE)
-	for letterName in os.listdir(alphabetPath):
+	for scale in np.linspace(0.2,1.8,40)[::-1]:
+		resized = imutils.resize(screenshot, width = int(screenshot.shape[1] * scale))
+		r = screenshot.shape[1] / float(resized.shape[1]) #ratio of old to new
+		for letterName in os.listdir(alphabetPath):
 
-		print('Looking for', str(letterName)[0:1])
+			print('Looking for', str(letterName)[0:1])
 
-		colorImage = cv2.imread(alphabetPath + '/' + str(letterName))
-		letterImage = cv2.imread(alphabetPath + '/' + str(letterName), cv2.IMREAD_GRAYSCALE)
-		rows,cols = letterImage.shape
+			colorImage = cv2.imread(alphabetPath + '/' + str(letterName))
+			letterImage = cv2.imread(alphabetPath + '/' + str(letterName), cv2.IMREAD_GRAYSCALE)
+			rows,cols = letterImage.shape
+			tempRows,tempCols = resized.shape
+			if (tempRows > rows and tempCols > cols):
+				res = cv2.matchTemplate(resized, letterImage, cv2.TM_CCOEFF_NORMED)
+				(_,maxVal,_,maxLoc) = cv2.minMaxLoc(res)
 
-		res = cv2.matchTemplate(screenshot, letterImage, cv2.TM_CCOEFF_NORMED)
-		(_,maxVal,_,maxLoc) = cv2.minMaxLoc(res)
-		
+				xRange = range(maxLoc[0] - 10, maxLoc[1] + 10)
+				print (maxVal)
+				threshold = 0.8
+				if (maxVal >= threshold):
+					if (str(letterName[0:1]) not in final):
+						#final.append(str(letterName)[0:1])
+						final[str(letterName[0:1])] = maxVal
+					elif (final[str(letterName[0:1])] < maxVal):
+						final[str(letterName[0:1])] = maxVal
 
-
-		#if x +- 10 and y +- 10 aren't in locations
-		#add x and y to locations
-		for x in range(-10,10):
-			for y in range(-10,10):
-				if (tuple([x,y]) not in locations):
-					locations.append(maxLoc)
-					break
-				break
-			break
-		
-		print (maxVal)
-		threshold = 0.9
-		if (maxVal >= threshold):
-			final.append(str(letterName)[0:1])
 	print ('expected', str(os.listdir(gameScreenshotPath)[screenshotPos]))
-	print ('expecting', len(locations), 'letters')
+	#print ('expecting', len(locations), 'letters')
 	print ('found', len(final), 'letters')
-	print (final)
 	return final
 
-def getExpectedNum(gameScreenshotPath,screenshotPos):
-	screenshot = cv2.imread(gameScreenshotPath + '/' + os.listdir(gameScreenshotPath)[screenshotPos], cv2.IMREAD_GRAYSCALE)
+def topMatches(scoreList,expectedNum): #list of scores, expected number of letters
+	final = [expectedNum]
+	for score in scoreList:
+		if (len(final) < expectedNum):
+			final.append(score)
+		else:
+			for temp in range(0,len(final)):
+				if (score > temp):
+					final[temp] = score
+	return final
 
+	
 
-
-		
 def main():
-	#formatAll('alphabet', pathForm)
-	#display('bottomHalf', formatScreenshot(pathScreeshot))
+	#display('bottomHalf', 0,formatScreenshot(pathScreenshot))
 	#print (matchLetters(pathScreeshot,pathForm))
 	formatAll(pathUnForm, pathForm)
+	print (matchLetters(pathScreenshot,0,pathForm))
+	'''
 	for screenshot in range(0,len(os.listdir(pathScreenshot))):
    		print (matchLetters(pathScreenshot,screenshot,pathForm))
+   	'''
 	return 0		
 
 
