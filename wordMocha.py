@@ -17,6 +17,17 @@ def listener():
 
 		userIn = input('Letters: ')
 
+def solve(letters):
+	if (len(letters) == 7):
+		formatOutput(spell.known(twoDtoStrings(solveForSeven(letters))))
+	if (len(letters) == 6):
+		formatOutput(spell.known(twoDtoStrings(solveForSix(letters))))
+	if (len(letters) == 5):
+		formatOutput(spell.known(twoDtoStrings(solveForFive(letters))))
+	if (len(letters) == 4):
+		formatOutput(spell.known(twoDtoStrings(solveForFour(letters))))
+	if (len(letters) == 3):
+		formatOutput(spell.known(twoDtoStrings(solveForThree(letters))))
 
 def twoDtoStrings(twolist):
 	final = []
@@ -236,7 +247,7 @@ def combos(letters,final):
 
 
 #print (combos('abc',[]))
-listener()
+#listener()
 #recursiveTest (0,10)
 #print (solveLoops('hello'))
 #print ([1,2,3].remove(2))

@@ -2,6 +2,9 @@ import os
 import numpy as np
 import imutils
 import cv2
+import sys
+
+import wordMocha
 '''
 Colin Chen October 2018
 
@@ -89,7 +92,7 @@ def matchLetters(gameScreenshotPath,screenshotPos, alphabetPath):
 	final = {}
 	locations = []
 	screenshot = cv2.imread(gameScreenshotPath + '/' + os.listdir(gameScreenshotPath)[screenshotPos], cv2.IMREAD_GRAYSCALE)
-	for scale in np.linspace(0.2,1.8,80)[::-1]:
+	for scale in np.linspace(0.2,2,100)[::-1]:
 		print ('SCALE:',scale)
 		resized = imutils.resize(screenshot, width = int(screenshot.shape[1] * scale))
 		r = screenshot.shape[1] / float(resized.shape[1]) #ratio of old to new
@@ -137,8 +140,11 @@ def topMatches(scoreList,expectedNum): #list of scores, expected number of lette
 def main():
 	#display('bottomHalf', 0,formatScreenshot(pathScreenshot))
 	#print (matchLetters(pathScreeshot,pathForm))
+
 	formatAll(pathUnForm, pathForm)
-	print (matchLetters(pathScreenshot,4,pathForm))
+	letters = matchLetters(pathScreenshot,int(sys.argv[1]),pathForm)
+	print (letters)
+	print (wordMocha.solve(letters))
 	'''
 	for screenshot in range(0,len(os.listdir(pathScreenshot))):
    		print (matchLetters(pathScreenshot,screenshot,pathForm))
