@@ -18,7 +18,8 @@ Uses spellchecker to find English words
 Spellchecker returns some weird results for "English words" but it is much easier to pick out english words from a small list of results
 than it is to determine them from the thousands of possible combinations of letters
 
-Currently only works from three to seven letter combinations. I'm working on removing this restriction.
+Currently only works from three to seven letter combinations. Also doesn't properly add duplicate letters if they appear more than once. 
+I'm working on removing these restriction.
 
 
 
