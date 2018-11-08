@@ -8,7 +8,7 @@ colin.a.chen@gmail.com
 
 
 
-Finds words given six letters from a screenshot of the game. Made to beat the game WordMocha
+Finds words given sp to seven letters from a screenshot of the game. Made to beat the game WordMocha
 Uses opencv for image processing and os to acceessing other directories
 I used snipping tool to extract the individual letters for template matching. I couldn't find J, Q,  and X.
 Game Screenshots were all found online.
