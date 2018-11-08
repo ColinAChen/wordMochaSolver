@@ -89,12 +89,13 @@ def matchLetters(gameScreenshotPath,screenshotPos, alphabetPath):
 	final = {}
 	locations = []
 	screenshot = cv2.imread(gameScreenshotPath + '/' + os.listdir(gameScreenshotPath)[screenshotPos], cv2.IMREAD_GRAYSCALE)
-	for scale in np.linspace(0.2,1.8,40)[::-1]:
+	for scale in np.linspace(0.2,1.8,80)[::-1]:
+		print ('SCALE:',scale)
 		resized = imutils.resize(screenshot, width = int(screenshot.shape[1] * scale))
 		r = screenshot.shape[1] / float(resized.shape[1]) #ratio of old to new
 		for letterName in os.listdir(alphabetPath):
 
-			print('Looking for', str(letterName)[0:1])
+			#print('Looking for', str(letterName)[0:1])
 
 			colorImage = cv2.imread(alphabetPath + '/' + str(letterName))
 			letterImage = cv2.imread(alphabetPath + '/' + str(letterName), cv2.IMREAD_GRAYSCALE)
@@ -105,13 +106,14 @@ def matchLetters(gameScreenshotPath,screenshotPos, alphabetPath):
 				(_,maxVal,_,maxLoc) = cv2.minMaxLoc(res)
 
 				xRange = range(maxLoc[0] - 10, maxLoc[1] + 10)
-				print (maxVal)
-				threshold = 0.8
-				if (maxVal >= threshold):
-					if (str(letterName[0:1]) not in final):
+				#print (maxVal)
+				threshold = 0.9
+				if (maxVal >= threshold): #only if decent match
+					print (str(letterName[0:1]), maxVal)
+					if (str(letterName[0:1]) not in final): #add if letter is not already in
 						#final.append(str(letterName)[0:1])
 						final[str(letterName[0:1])] = maxVal
-					elif (final[str(letterName[0:1])] < maxVal):
+					elif (final[str(letterName[0:1])] < maxVal): #add if current score is better than existing one
 						final[str(letterName[0:1])] = maxVal
 
 	print ('expected', str(os.listdir(gameScreenshotPath)[screenshotPos]))
@@ -136,7 +138,7 @@ def main():
 	#display('bottomHalf', 0,formatScreenshot(pathScreenshot))
 	#print (matchLetters(pathScreeshot,pathForm))
 	formatAll(pathUnForm, pathForm)
-	print (matchLetters(pathScreenshot,0,pathForm))
+	print (matchLetters(pathScreenshot,4,pathForm))
 	'''
 	for screenshot in range(0,len(os.listdir(pathScreenshot))):
    		print (matchLetters(pathScreenshot,screenshot,pathForm))
