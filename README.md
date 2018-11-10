@@ -8,7 +8,7 @@ colin.a.chen@gmail.com
 
 
 
-Finds words given six letters from a screenshot of the game. Made to beat the game WordMocha
+Finds words given sp to seven letters from a screenshot of the game. Made to beat the game WordMocha
 Uses opencv for image processing and os to acceessing other directories
 I used snipping tool to extract the individual letters for template matching. I couldn't find J, Q,  and X.
 Game Screenshots were all found online.
@@ -18,7 +18,8 @@ Uses spellchecker to find English words
 Spellchecker returns some weird results for "English words" but it is much easier to pick out english words from a small list of results
 than it is to determine them from the thousands of possible combinations of letters
 
-Currently only works from three to seven letter combinations. I'm working on removing this restriction.
+Currently only works from three to seven letter combinations. Also doesn't properly add duplicate letters if they appear more than once. 
+I'm working on removing these restriction.
 
 
 
